@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const gameContainer = document.getElementById('gameContainer');
@@ -26,7 +25,6 @@ const timeline = {
 };
 let currentScene = 'dot', timer = 0, sceneQueue = ['firstLeg', 'secondLeg', 'torso', 'firstHand', 'secondHand', 'head', 'walking', 'danger', 'hangman'];
 
-const words = ['JAVASCRIPT', 'CANVAS', 'ANIMATION', 'STICKMAN', 'EVOLUTION', 'BOUNCING', 'ADVENTURE'];
 let currentWord = '', guessedLetters = [], wrongGuesses = 0, maxWrongGuesses = 6, gameActive = false, gameWon = false, gameLost = false;
 let gallowsProgress = 0, ropeLength = 0, stickmanHanging = false;
 
@@ -35,6 +33,13 @@ let shrinkingHeadRadius = null;
 let shrinkingHeadX = null, shrinkingHeadY = null;
 let moveToStart = false;
 let endingPause = false;
+
+async function getRandomWord() {
+  const response = await fetch('https://random-word-api.herokuapp.com/word?number=1');
+  if (!response.ok) return alert('Network error: Unable to fetch word');
+  const words = await response.json();
+  return words[0].toUpperCase();
+}
 
 function drawLine(x1, y1, x2, y2, color = '#000', width = bodyThickness) {
   ctx.strokeStyle = color;
@@ -147,18 +152,18 @@ function drawNarration() {
   ctx.restore();
 }
 
-function nextScene() {
+async function nextScene() {
   if (sceneQueue.length > 0) {
     currentScene = sceneQueue.shift();
     timer = 0;
     if (timeline[currentScene]) updateNarration(timeline[currentScene].narration);
     if (currentScene === 'danger') gallowsProgress = ropeLength = 0;
-    if (currentScene === 'hangman') startHangman();
+    if (currentScene === 'hangman') await startHangman();
   }
 }
 
-function startHangman() {
-  currentWord = words[Math.floor(Math.random() * words.length)];
+async function startHangman() {
+  currentWord = await getRandomWord();
   guessedLetters = [];
   wrongGuesses = 0;
   gameActive = true;
@@ -196,7 +201,6 @@ function guessLetter(letter) {
     updateWordDisplay();
     if (currentWord.split('').every(char => guessedLetters.includes(char))) {
       gameWon = true; gameActive = false;
-      document.getElementById('gameStatus').innerHTML = '<h3 style="color: green;">You saved the stickman!</h3>';
       setTimeout(happyEnding, 2000);
     }
   } else {
@@ -263,7 +267,7 @@ function restartMovie() {
   updateNarration(timeline[currentScene].narration);
 }
 
-function draw() {
+async function draw() {
   if (resetting) {
     animateResetDot();
     return;
@@ -300,10 +304,12 @@ function draw() {
   drawNarration();
   updateCharacterMovement();
   timer++;
-  if (timeline[currentScene] && timer >= timeline[currentScene].duration) nextScene();
+  if (timeline[currentScene] && timer >= timeline[currentScene].duration) await nextScene();
 }
 
-function animate() { draw(); requestAnimationFrame(animate); }
+async function animate() { await draw(); requestAnimationFrame(animate); }
 
 updateNarration(timeline[currentScene].narration);
-animate();
+(async () => {
+  await animate();
+})();
