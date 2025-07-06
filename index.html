@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Dot</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f0f0f0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: row;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        flex-direction: column;
+        padding: 10px;
+      }
+      .game-container {
+        margin-top: 10px;
+      }
+    }
+
+    canvas {
+      border: 2px solid #333;
+      background: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 800px;
+      max-height: 600px;
+      aspect-ratio: 4/3;
+    }
+
+    .game-container {
+      margin-top: 20px;
+      text-align: center;
+      display: none;
+    }
+
+    .word-display {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 20px 0;
+      letter-spacing: 5px;
+    }
+
+    .alphabet {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .letter-btn {
+      padding: 10px 15px;
+      border: 2px solid #333;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      background: white;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: monospace;
+    }
+
+    .letter-btn:hover {
+      background: #e0e0e0;
+    }
+
+    .letter-btn.used {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .restart-btn {
+      border: #333 2px solid;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #fff;
+      color: #000;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    }
+
+    .restart-btn:hover {
+      background: #e0e0e0;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="canvas" width="800" height="600"></canvas>
+  <div class="game-container" id="gameContainer">
+    <h2>Save the Stickman!</h2>
+    <div class="word-display" id="wordDisplay"></div>
+    <div class="alphabet" id="alphabet"></div>
+    <div id="gameStatus"></div>
+    <button class="restart-btn" onclick="restartMovie()">Play Again</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
